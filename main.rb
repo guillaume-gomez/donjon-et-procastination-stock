@@ -27,30 +27,34 @@ def classic_cards(stock_data)
 end
 
 def pick_gold_card(gold_cards)
-  gold_card = gold_cards.sample
+  gold_cards.sample
 end
 
-def pick_classic_card(classic_cards)
-  classic_cards.sample
+def pick_classic_card(classic_cards, picked_cards)
+  (classic_cards - picked_cards).sample
+end
+
+def update_cards_stock(card_stock, picked_card)
+  new_cards = card_stock.dup
+  new_cards.delete_at(new_cards.index(picked_card))
+  new_cards
 end
 
 def compute_booster(gold_cards, classic_cards)
   gold_card = pick_gold_card(gold_cards)
-  new_gold_cards = gold_cards.dup
-  new_gold_cards.delete_at(new_gold_cards.index(gold_card))
+  new_gold_cards = update_cards_stock(gold_cards, gold_card)
 
-  new_classic_cards = classic_cards.dup
-  classic_card1 = pick_classic_card(new_classic_cards)
-  new_classic_cards.delete_at(new_classic_cards.index(classic_card1))
+  classic_card1 = pick_classic_card(classic_cards, [])
+  new_classic_cards = update_cards_stock(classic_cards, classic_card1)
+  
+  classic_card2 = pick_classic_card(new_classic_cards, [classic_card1])
+  new_classic_cards = update_cards_stock(new_classic_cards, classic_card2)
 
-  classic_card2 = pick_classic_card(new_classic_cards)
-  new_classic_cards.delete_at(new_classic_cards.index(classic_card2))
+  classic_card3 = pick_classic_card(new_classic_cards, [classic_card1, classic_card2])
+  new_classic_cards = update_cards_stock(new_classic_cards, classic_card3)
 
-  classic_card3 = pick_classic_card(new_classic_cards)
-  new_classic_cards.delete_at(new_classic_cards.index(classic_card3))
-
-  classic_card4 = pick_classic_card(new_classic_cards)
-  new_classic_cards.delete_at(new_classic_cards.index(classic_card4))
+  classic_card4 = pick_classic_card(new_classic_cards, [classic_card1, classic_card2, classic_card3])
+  new_classic_cards = update_cards_stock(new_classic_cards, classic_card4)
 
   return {
     booster: [gold_card, classic_card1, classic_card2, classic_card3, classic_card4],
@@ -93,17 +97,20 @@ def main
   remaining_classic_cards = stock[:remaining_classic_cards]
   
   puts "They are #{sum} cards in the stock"
+  display_packs(boosters)
   puts "The stock has #{boosters.count} packs"
-  print boosters
-  puts ""
   puts "Number of remaining gold cards #{remaining_gold_cards.count}"
   puts "Number of remaining classic cards #{remaining_classic_cards.count}"
 end
 
-def display_packs(booster)
+def display_packs(boosters)
+  boosters.each do |booster|
+    display_pack(booster)
+  end
 end
 
 def display_pack(booster)
+  puts booster.to_s
 end
 
 
