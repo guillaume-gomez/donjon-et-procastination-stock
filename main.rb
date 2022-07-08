@@ -1,4 +1,4 @@
-require 'byebug'
+#require 'byebug'
 require 'csv'
 
 CARD_NUMBER_COLUMN_NUMBER = 0
