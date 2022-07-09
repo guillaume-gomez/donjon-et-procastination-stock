@@ -12,19 +12,22 @@ end
 
 def gold_cards(stock_data)
   stock_gold_cards = stock_data.filter{|row| row[CARD_TYPE_COLUMN_NUMBER] == "gold" }
-  stock_gold_cards.reduce([]) do |acc, row|
+  create_stock(stock_gold_cards)
+end
+
+def classic_cards(stock_data)
+  stock_classic_cards = stock_data.filter{|row| row[CARD_TYPE_COLUMN_NUMBER] != "gold" }
+  create_stock(stock_classic_cards)
+end
+
+def create_stock(stock_card)
+  stock_card.reduce([]) do |acc, row|
+    card = { title: row[CARD_TILE_COLUMN_NUMBER], number: row[QUANTITY_COLUMN_NUMBER].to_i }
     cards = Array.new(row[QUANTITY_COLUMN_NUMBER].to_i, row[CARD_TILE_COLUMN_NUMBER])
     acc.concat(cards)
   end
 end
 
-def classic_cards(stock_data)
-  stock_classic_cards = stock_data.filter{|row| row[CARD_TYPE_COLUMN_NUMBER] != "gold" }
-  stock_classic_cards.reduce([]) do |acc, row|
-    cards = Array.new(row[QUANTITY_COLUMN_NUMBER].to_i, row[CARD_TILE_COLUMN_NUMBER])
-    acc.concat(cards)
-  end
-end
 
 def pick_gold_card(gold_cards)
   gold_cards.sample
