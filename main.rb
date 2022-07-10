@@ -22,8 +22,8 @@ end
 
 def create_stock(stock_card)
   stock_card.reduce([]) do |acc, row|
-    card = { title: row[CARD_TILE_COLUMN_NUMBER], number: row[QUANTITY_COLUMN_NUMBER].to_i }
-    cards = Array.new(row[QUANTITY_COLUMN_NUMBER].to_i, row[CARD_TILE_COLUMN_NUMBER])
+    card = { title: row[CARD_TILE_COLUMN_NUMBER], number: row[CARD_NUMBER_COLUMN_NUMBER].to_i }
+    cards = Array.new(row[QUANTITY_COLUMN_NUMBER].to_i, card)
     acc.concat(cards)
   end
 end
@@ -34,12 +34,14 @@ def pick_gold_card(gold_cards)
 end
 
 def pick_classic_card(classic_cards, picked_cards)
-  (classic_cards - picked_cards).sample
+  filtered_cards = classic_cards.select{|card| !picked_cards.include?(card[:number])}
+  filtered_cards.sample
 end
 
 def update_cards_stock(card_stock, picked_card)
   new_cards = card_stock.dup
-  new_cards.delete_at(new_cards.index(picked_card))
+  picked_card_index = new_cards.index{|card| card[:number] == picked_card[:number]}
+  new_cards.delete_at(picked_card_index)
   new_cards
 end
 
@@ -47,7 +49,7 @@ def compute_booster(gold_cards, classic_cards)
   gold_card = pick_gold_card(gold_cards)
   new_gold_cards = update_cards_stock(gold_cards, gold_card)
 
-  classic_card1 = pick_classic_card(classic_cards, [])
+  classic_card1 = pick_classic_card(classic_cards, [gold_card])
   new_classic_cards = update_cards_stock(classic_cards, classic_card1)
   
   classic_card2 = pick_classic_card(new_classic_cards, [classic_card1])
