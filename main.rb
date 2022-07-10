@@ -73,7 +73,7 @@ def compute_stock(stock_data)
   gold_cards = gold_cards(stock_data)
   classic_cards = classic_cards(stock_data)
 
-  while(gold_cards.count >= 1 && classic_cards.count >= 5) do
+  while(can_create_stock(gold_cards, classic_cards)) do
     booster_data = compute_booster(gold_cards, classic_cards)
 
     boosters.append(booster_data[:booster])
@@ -86,6 +86,15 @@ def compute_stock(stock_data)
     remaining_gold_cards: gold_cards,
     remaining_classic_cards: classic_cards
   }
+end
+
+def can_create_stock(gold_cards, classic_cards)
+  gold_cards.count >= 1 && classic_cards.count >= 5
+end
+
+def has_gold_card(gold_cards, classic_cards)
+  differences = gold_cards.map{|card| card[:number]} - classic_cards.map{|card| card[:number]}
+  differences.count > 0
 end
 
 def stock_sum(stock_data)
